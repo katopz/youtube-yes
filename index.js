@@ -1,3 +1,5 @@
+window.isDebug = false
+
 const isBlock = () => {
   // Check for existing dialog
   const dialog = Array.from(document.querySelectorAll('paper-dialog'))[0]
@@ -51,36 +53,40 @@ let moveId
 let isActive = false
 const notMove = () => {
   isActive = false
-  console.log(isActive)
+  window.isDebug && console.log(isActive)
 }
 
-document.body.addEventListener('mousemove', () => {
+const active = () => {
   isActive = true
-  console.log(isActive)
+  window.isDebug && console.log(isActive)
 
   clearTimeout(moveId)
   moveId = setTimeout(notMove, 1000)
-})
+}
+
+document.body.addEventListener('mousemove', active)
+document.body.addEventListener('mouseover', active)
+document.body.addEventListener('mousedown', active)
 
 const initVideo = () => {
-  console.log('Init...')
+  window.isDebug && console.log('Init...')
   const video = document.querySelector('video')
   if (!video) setTimeout(initVideo, 1000)
 
-  console.log('Watch for video pause')
+  window.isDebug && console.log('Watch for video pause')
 
   // Never pause!
   video.addEventListener('pause', () => {
-    console.log('PAUSED!!!')
+    window.isDebug && console.log('PAUSED!!!')
 
     if (isActive) return
 
     video.play()
-    console.log('PLAY!!!')
+    window.isDebug && console.log('PLAY!!!')
   })
 
   moveId = setTimeout(notMove, 1000)
-  console.log('Ready!')
+  window.isDebug && console.log('Ready!')
 }
 
 initVideo()
