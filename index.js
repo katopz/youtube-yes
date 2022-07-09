@@ -1,6 +1,9 @@
-window.isDebug = false
-
-const log = (...args) => log(...args)
+var s = document.createElement('script')
+s.src = chrome.runtime.getURL('script.js')
+s.onload = function () {
+  this.remove()
+}
+;(document.head || document.documentElement).appendChild(s)
 
 const isBlock = () => {
   // Check for existing dialog
@@ -8,7 +11,6 @@ const isBlock = () => {
   if (!dialog) return false
   if (getComputedStyle(dialog).display === 'none') return false
 
-  log('BLOCKED!!!')
   return true
 }
 
@@ -24,7 +26,6 @@ const confirmIfNeed = () => {
 
   // YES!
   button.click()
-  log('YES!!!')
 }
 
 // Select the node that will be observed for mutations
@@ -53,12 +54,10 @@ let moveId
 let isActive = false
 const notMove = () => {
   isActive = false
-  log(isActive)
 }
 
 const active = () => {
   isActive = true
-  log(isActive)
 
   clearTimeout(moveId)
   moveId = setTimeout(notMove, 1000)
@@ -71,27 +70,41 @@ document.body.addEventListener('keydown', active)
 document.body.addEventListener('scroll', active)
 document.body.addEventListener('touchstart', active)
 
-const initVideo = () => {
-  log('Init...')
+const onPause = () => {
+  // Active?
+  if (isActive) return
+
+  video.play()
+}
+
+const watch = () => {
+  window.isDebug && console.log('watch...')
+
+  // Alway play
   const video = document.querySelector('video')
-  if (!video) setTimeout(initVideo, 1000)
+  video.removeEventListener('pause', onPause)
+  video.addEventListener('pause', onPause)
 
-  log('Watch for video pause')
-
-  // Never pause!
-  video.addEventListener('pause', () => {
-    log('PAUSED!!!')
-
-    // Active?
-    log('isActive:', isActive)
-    if (isActive) return
-
-    video.play()
-    log('PLAY!!!')
-  })
-
+  // Watch for human pause
   moveId = setTimeout(notMove, 1000)
-  log('Ready!')
+}
+
+const initVideo = () => {
+  window.isDebug && console.log('initVideo...')
+  // On homepage?
+  if (window.location.pathname !== '/watch') {
+    setTimeout(initVideo, 1000)
+    return
+  }
+
+  // Video ready?
+  const video = document.querySelector('video')
+  if (!video) {
+    setTimeout(initVideo, 1000)
+    return
+  }
+
+  watch()
 }
 
 initVideo()
