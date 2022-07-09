@@ -1,20 +1,20 @@
 // https://gist.github.com/adisib/1e6b429b9bb630fceb170f3fa77c57a3
 const alwaysHD = () => {
-  window.isDebug && console.log('alwaysHD...')
+  console.log('🐥 alwaysHD...')
   // On homepage?
   if (window.location.pathname !== '/watch') {
     setTimeout(alwaysHD, 1000)
     return
   }
 
-  window.isDebug && console.log('ytPlayer...')
+  console.log('🐥 ytPlayer...')
   var ytPlayer = document.getElementById('movie_player') || document.getElementsByClassName('html5-video-player')[0]
   if (!ytPlayer) {
     setTimeout(alwaysHD, 1000)
     return
   }
 
-  window.isDebug && console.log('ytPlayer.getPlaybackQuality...')
+  console.log('🐥 ytPlayer.getPlaybackQuality...')
   if (!ytPlayer.getPlaybackQuality) {
     console.error('no ytPlayer.getPlaybackQuality')
     // setTimeout(alwaysHD, 10000)
@@ -24,8 +24,8 @@ const alwaysHD = () => {
   const current_quality = ytPlayer.getPlaybackQuality()
   const quality = ytPlayer.getAvailableQualityLevels()[0]
 
-  window.isDebug && console.log('current_quality:', current_quality)
-  window.isDebug && console.log('quality:', quality)
+  console.log('🐥 current_quality:', current_quality)
+  console.log('🐥 quality:', quality)
 
   // Already HD
   if (current_quality === quality) return
@@ -37,11 +37,34 @@ const alwaysHD = () => {
   }
 
   // Set to HD
-  window.isDebug && console.log('setPlaybackQuality:', quality)
+  console.log('🐥 setPlaybackQuality:', quality)
   ytPlayer.stopVideo()
   ytPlayer.setPlaybackQualityRange && ytPlayer.setPlaybackQualityRange(quality)
   ytPlayer.setPlaybackQuality(quality)
   ytPlayer.playVideo()
 }
 
-alwaysHD()
+// Watch for dom change
+
+var oldHref = document.location.href
+
+window.onload = function () {
+  var bodyList = document.querySelector('body')
+
+  var observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (_mutation) {
+      if (oldHref != document.location.href) {
+        oldHref = document.location.href
+        alwaysHD()
+      }
+    })
+  })
+
+  var config = {
+    childList: true,
+    subtree: true
+  }
+
+  observer.observe(bodyList, config)
+  alwaysHD()
+}

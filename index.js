@@ -78,7 +78,7 @@ const onPause = () => {
 }
 
 const watch = () => {
-  window.isDebug && console.log('watch...')
+  console.log('🐥 watch...')
 
   // Alway play
   const video = document.querySelector('video')
@@ -90,7 +90,8 @@ const watch = () => {
 }
 
 const initVideo = () => {
-  window.isDebug && console.log('initVideo...')
+  console.log('🐥 initVideo...')
+
   // On homepage?
   if (window.location.pathname !== '/watch') {
     setTimeout(initVideo, 1000)
@@ -107,4 +108,27 @@ const initVideo = () => {
   watch()
 }
 
-initVideo()
+// Watch for dom change
+
+var oldHref = document.location.href
+
+window.onload = function () {
+  var bodyList = document.querySelector('body')
+
+  var observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (_mutation) {
+      if (oldHref != document.location.href) {
+        oldHref = document.location.href
+        initVideo()
+      }
+    })
+  })
+
+  var config = {
+    childList: true,
+    subtree: true
+  }
+
+  observer.observe(bodyList, config)
+  initVideo()
+}
