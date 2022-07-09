@@ -67,6 +67,9 @@ const active = () => {
 document.body.addEventListener('mousemove', active)
 document.body.addEventListener('mouseover', active)
 document.body.addEventListener('mousedown', active)
+document.body.addEventListener('keydown', active)
+document.body.addEventListener('scroll', active)
+document.body.addEventListener('touchstart', active)
 
 const initVideo = () => {
   log('Init...')
@@ -79,6 +82,8 @@ const initVideo = () => {
   video.addEventListener('pause', () => {
     log('PAUSED!!!')
 
+    // Active?
+    log('isActive:', isActive)
     if (isActive) return
 
     video.play()
