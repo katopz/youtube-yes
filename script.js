@@ -1,31 +1,28 @@
+const println = (...arguments) => {
+  window.isDebug && console.log(...arguments)
+}
+
 // https://gist.github.com/adisib/1e6b429b9bb630fceb170f3fa77c57a3
 const alwaysHD = () => {
-  console.log('🐥 alwaysHD...')
+  println('alwaysHD...')
   // On homepage?
   if (window.location.pathname !== '/watch') {
     setTimeout(alwaysHD, 1000)
     return
   }
 
-  console.log('🐥 ytPlayer...')
+  println('ytPlayer...')
   var ytPlayer = document.getElementById('movie_player') || document.getElementsByClassName('html5-video-player')[0]
   if (!ytPlayer) {
     setTimeout(alwaysHD, 1000)
     return
   }
 
-  console.log('🐥 ytPlayer.getPlaybackQuality...')
-  if (!ytPlayer.getPlaybackQuality) {
-    console.error('no ytPlayer.getPlaybackQuality')
-    // setTimeout(alwaysHD, 10000)
-    return
-  }
-
-  const current_quality = ytPlayer.getPlaybackQuality()
+  const current_quality = ytPlayer.getPlaybackQuality ? ytPlayer.getPlaybackQuality() : ''
   const quality = ytPlayer.getAvailableQualityLevels()[0]
 
-  console.log('🐥 current_quality:', current_quality)
-  console.log('🐥 quality:', quality)
+  println('current_quality:', current_quality)
+  println('quality:', quality)
 
   // Already HD
   if (current_quality === quality) return
@@ -37,7 +34,7 @@ const alwaysHD = () => {
   }
 
   // Set to HD
-  console.log('🐥 setPlaybackQuality:', quality)
+  println('setPlaybackQuality:', quality)
   ytPlayer.stopVideo()
   ytPlayer.setPlaybackQualityRange && ytPlayer.setPlaybackQualityRange(quality)
   ytPlayer.setPlaybackQuality(quality)

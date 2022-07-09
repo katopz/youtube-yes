@@ -1,3 +1,7 @@
+const println = (...arguments) => {
+  window.isDebug && console.log(...arguments)
+}
+
 var s = document.createElement('script')
 s.src = chrome.runtime.getURL('script.js')
 s.onload = function () {
@@ -78,7 +82,7 @@ const onPause = () => {
 }
 
 const watch = () => {
-  console.log('🐥 watch...')
+  println('watch...')
 
   // Alway play
   const video = document.querySelector('video')
@@ -90,7 +94,7 @@ const watch = () => {
 }
 
 const initVideo = () => {
-  console.log('🐥 initVideo...')
+  println('initVideo...')
 
   // On homepage?
   if (window.location.pathname !== '/watch') {
