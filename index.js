@@ -61,6 +61,8 @@ const notMove = () => {
   isActive = false
 }
 
+let isPIP = false
+
 const active = () => {
   isActive = true
 
@@ -80,9 +82,20 @@ const onPause = (e) => {
 
   // Active?
   if (isActive) return
+  if (isPIP) return
 
   println('play!')
   e.target.play()
+}
+
+const onEnterPip = (e) => {
+  println('enter pip...')
+  isPIP = true
+}
+
+const onLeavePip = (e) => {
+  println('leave pip...')
+  isPIP = false
 }
 
 const watch = () => {
@@ -92,6 +105,10 @@ const watch = () => {
   const video = document.querySelector('video')
   video.removeEventListener('pause', onPause)
   video.addEventListener('pause', onPause)
+
+  // PIP
+  video.addEventListener('enterpictureinpicture', onEnterPip, false)
+  video.addEventListener('leavepictureinpicture', onLeavePip, false)
 
   // Watch for human pause
   moveId = setTimeout(notMove, 1000)
