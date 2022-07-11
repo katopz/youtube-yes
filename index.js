@@ -78,7 +78,7 @@ document.body.addEventListener('scroll', active)
 document.body.addEventListener('touchstart', active)
 
 const onPause = (e) => {
-  println('pause...')
+  println('pause...:', e)
 
   // Active?
   if (isActive) return
@@ -135,12 +135,12 @@ const initVideo = () => {
 
 // Watch for dom change
 
-var oldHref = document.location.href
+const oldHref = document.location.href
 
 window.onload = function () {
-  var bodyList = document.querySelector('body')
+  const bodyList = document.querySelector('body')
 
-  var observer = new MutationObserver(function (mutations) {
+  const observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (_mutation) {
       if (oldHref != document.location.href) {
         oldHref = document.location.href
@@ -149,7 +149,7 @@ window.onload = function () {
     })
   })
 
-  var config = {
+  const config = {
     childList: true,
     subtree: true
   }
