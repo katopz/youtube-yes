@@ -1,4 +1,4 @@
-window.isDebug = false
+window.isDebug = true
 const println = (...arguments) => {
   window.isDebug && console.log(...arguments)
 }
