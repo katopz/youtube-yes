@@ -1,3 +1,4 @@
+window.isDebug = false
 const println = (...arguments) => {
   window.isDebug && console.log(...arguments)
 }
@@ -74,11 +75,14 @@ document.body.addEventListener('keydown', active)
 document.body.addEventListener('scroll', active)
 document.body.addEventListener('touchstart', active)
 
-const onPause = () => {
+const onPause = (e) => {
+  println('pause...')
+
   // Active?
   if (isActive) return
 
-  video.play()
+  println('play!')
+  e.target.play()
 }
 
 const watch = () => {
