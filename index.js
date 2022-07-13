@@ -1,4 +1,4 @@
-window.isDebug = true
+window.isDebug = window.location.hash === '#debug'
 const println = (...arguments) => {
   window.isDebug && console.log(...arguments)
 }
@@ -10,27 +10,15 @@ s.onload = function () {
 }
 ;(document.head || document.documentElement).appendChild(s)
 
-const isBlock = () => {
-  // Check for existing dialog
-  const dialog = Array.from(document.querySelectorAll('paper-dialog'))[0]
-  if (!dialog) return false
-  if (getComputedStyle(dialog).display === 'none') return false
-
-  return true
-}
-
+var clickId
 const confirmIfNeed = () => {
-  if (!isBlock()) return
-
   // Check for yes existing button
-  const button = Array.from(document.querySelectorAll('paper-button')).find((e) => e.attributes['aria-label'] && e.attributes['aria-label'].nodeValue.toUpperCase() === 'YES')
-  if (!button) return false
-
-  // Prevent rapidly call by observer
-  Array.from(document.querySelectorAll('paper-dialog'))[0].style.display = 'none'
-
-  // YES!
-  button.click()
+  const button = Array.from(document.querySelectorAll('#button')).find((e) => e.attributes['aria-label'] && e.attributes['aria-label'].nodeValue.toUpperCase() === 'YES')
+  if (button) {
+    // Lazy click later prevent rapid call
+    clearTimeout(clickId)
+    clickId = setTimeout(button.click, 100)
+  }
 }
 
 // Select the node that will be observed for mutations
@@ -40,12 +28,15 @@ const targetNode = document.body
 const config = { attributes: true, childList: true, subtree: true }
 
 // Callback function to execute when mutations are observed
-const callback = function (mutationsList, observer) {
+const callback = function (mutationsList, _observer) {
+  let isDirty = false
   for (let mutation of mutationsList) {
     if (mutation.type === 'childList' || mutation.type === 'attributes') {
-      confirmIfNeed()
+      isDirty = true
     }
   }
+
+  isDirty && confirmIfNeed()
 }
 
 // Create an observer instance linked to the callback function
@@ -77,13 +68,25 @@ document.body.addEventListener('keydown', active)
 document.body.addEventListener('scroll', active)
 document.body.addEventListener('touchstart', active)
 
+document.addEventListener('visibilitychange', function () {
+  println('visibilitychange...', document.visibilityState)
+  if (document.visibilityState === 'visible') {
+    confirmIfNeed()
+  } else {
+    // do something when not visible
+  }
+})
+
 const onPause = (e) => {
-  println('pause...:', e)
+  println('pause...:', isActive, isPIP)
+
+  confirmIfNeed()
 
   // Active?
   if (isActive) return
-  if (isPIP) return
+  // if (isPIP) return
 
+  // fallback
   println('play!')
   e.target.play()
 }
@@ -134,8 +137,7 @@ const initVideo = () => {
 }
 
 // Watch for dom change
-
-const oldHref = document.location.href
+let oldHref = document.location.href
 
 window.onload = function () {
   const bodyList = document.querySelector('body')

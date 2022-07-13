@@ -1,5 +1,4 @@
-window.isDebug = true
-
+window.isDebug = window.location.hash === '#debug'
 const println = (...arguments) => {
   window.isDebug && console.log(...arguments)
 }
@@ -34,7 +33,7 @@ const alwaysHD = () => {
 
   // Can be set?
   if (!ytPlayer.stopVideo) {
-    console.error('no ytPlayer.stopVideo')
+    println('no ytPlayer.stopVideo')
     return
   }
 
@@ -47,8 +46,7 @@ const alwaysHD = () => {
 }
 
 // Watch for dom change
-
-const oldHref = document.location.href
+let oldHref = document.location.href
 
 window.onload = function () {
   const bodyList = document.querySelector('body')

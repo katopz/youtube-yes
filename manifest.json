@@ -1,13 +1,10 @@
 {
-  "name": "Youtube™ YES!",
+  "name": "Youtube™ YES! + HD",
   "version": "2.1",
   "description": "Unstoppable YouTube + always HD",
   "icons": {
     "128": "duck-128.png"
   },
-  "permissions": [
-    "activeTab"
-  ],
   "content_scripts": [
     {
       "matches": [
