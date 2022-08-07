@@ -42,6 +42,13 @@ const alwaysHD = () => {
   ytPlayer.stopVideo()
   ytPlayer.setPlaybackQualityRange && ytPlayer.setPlaybackQualityRange(expected_quality)
   ytPlayer.setPlaybackQuality(expected_quality)
+  let storedQuality = localStorage.getItem('yt-player-quality')
+  if (!storedQuality || storedQuality.indexOf(expected_quality) === -1) {
+    let tc = Date.now(),
+      te = tc + 2592000000
+    localStorage.setItem('yt-player-quality', '{"data":"' + targetRes + '","expiration":' + te + ',"creation":' + tc + '}')
+  }
+
   ytPlayer.playVideo()
 }
 
@@ -67,4 +74,8 @@ window.onload = function () {
 
   observer.observe(bodyList, config)
   alwaysHD()
+
+  // Alway HD
+  const video = document.querySelector('video')
+  video.addEventListener('play', alwaysHD)
 }

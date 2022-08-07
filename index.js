@@ -11,13 +11,15 @@ s.onload = function () {
 ;(document.head || document.documentElement).appendChild(s)
 
 var clickId
-const confirmIfNeed = () => {
+const confirm = () => {
   // Check for yes existing button
   const button = Array.from(document.querySelectorAll('#button')).find((e) => e.attributes['aria-label'] && e.attributes['aria-label'].nodeValue.toUpperCase() === 'YES')
   if (button) {
     // Lazy click later prevent rapid call
     clearTimeout(clickId)
-    clickId = setTimeout(button.click, 100)
+    clickId = setTimeout(() => {
+      button.click()
+    }, 100)
   }
 }
 
@@ -36,7 +38,7 @@ const callback = function (mutationsList, _observer) {
     }
   }
 
-  isDirty && confirmIfNeed()
+  isDirty && confirm()
 }
 
 // Create an observer instance linked to the callback function
@@ -71,7 +73,7 @@ document.body.addEventListener('touchstart', active)
 document.addEventListener('visibilitychange', function () {
   println('visibilitychange...', document.visibilityState)
   if (document.visibilityState === 'visible') {
-    confirmIfNeed()
+    confirm()
   } else {
     // do something when not visible
   }
@@ -79,16 +81,29 @@ document.addEventListener('visibilitychange', function () {
 
 const onPause = (e) => {
   println('pause...:', isActive, isPIP)
+  // Hide anyway
+  confirm()
 
-  confirmIfNeed()
+  // Backdrop?
+  const isBackDrop = document.querySelector('body > tp-yt-iron-overlay-backdrop')
+  if (isBackDrop) {
+    // Play anyway
+    e.target && e.target.play()
+    return
+  }
 
   // Active?
   if (isActive) return
-  // if (isPIP) return
 
-  // fallback
-  println('play!')
-  e.target.play()
+  // plan B
+  println('play!!')
+  e.target && e.target.play()
+
+  // plan C
+  const video = document.querySelector('video')
+  if (video) {
+    video.play()
+  }
 }
 
 const onEnterPip = (e) => {
@@ -99,6 +114,7 @@ const onEnterPip = (e) => {
 const onLeavePip = (e) => {
   println('leave pip...')
   isPIP = false
+  confirm()
 }
 
 const watch = () => {
